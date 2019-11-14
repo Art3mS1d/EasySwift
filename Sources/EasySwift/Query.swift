@@ -69,18 +69,18 @@ enum Query<T: NSManagedObject> {
     static func any<P: TypedPredicate, V>(
         _ filter: P,
         by sort: KeyPath<T, V>,
-        descending: Bool = false,
+        desc: Bool = false,
         in context: NSManagedObjectContext
     ) -> T? where P.Root == T {
-        any(predicate: filter, sort: [NSSortDescriptor(keyPath: sort, ascending: !descending)], in: context)
+        any(predicate: filter, sort: [NSSortDescriptor(keyPath: sort, ascending: !desc)], in: context)
     }
     
     static func any<V>(
         by sort: KeyPath<T, V>,
-        descending: Bool = false,
+        desc: Bool = false,
         in context: NSManagedObjectContext
     ) -> T? {
-        all(sort: [NSSortDescriptor(keyPath: sort, ascending: !descending)], limit: 1, in: context).first
+        all(sort: [NSSortDescriptor(keyPath: sort, ascending: !desc)], limit: 1, in: context).first
     }
 
     static func all<P: TypedPredicate>(
@@ -95,20 +95,20 @@ enum Query<T: NSManagedObject> {
     static func all<P: TypedPredicate, V>(
         _ filter: P,
         by sort: KeyPath<T, V>,
-        descending: Bool = false,
+        desc: Bool = false,
         limit: Int = 0,
         in context: NSManagedObjectContext
     ) -> [T] where P.Root == T  {
-        all(predicate: filter, sort: [NSSortDescriptor(keyPath: sort, ascending: !descending)], limit: limit, in: context)
+        all(predicate: filter, sort: [NSSortDescriptor(keyPath: sort, ascending: !desc)], limit: limit, in: context)
     }
     
     static func all<V>(
         by sort: KeyPath<T, V>,
-        descending: Bool = false,
+        desc: Bool = false,
         limit: Int = 0,
         in context: NSManagedObjectContext
     ) -> [T] {
-        all(sort: [NSSortDescriptor(keyPath: sort, ascending: !descending)], limit: limit, in: context)
+        all(sort: [NSSortDescriptor(keyPath: sort, ascending: !desc)], limit: limit, in: context)
     }
     
     static func count<P: TypedPredicate>(
