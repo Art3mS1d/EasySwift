@@ -10,15 +10,16 @@ import Foundation
 @dynamicCallable
 public class Observer<T>: ObservationDelegate {
 
+    public init() { }
     fileprivate var descriptors: [Descriptor<T>] = []
 
-    func observe(_ handler: @escaping (T) -> Void) -> Observation {
+    public func observe(_ handler: @escaping (T) -> Void) -> Observation {
         let observation = Observation(delegate: self)
         descriptors.append(Descriptor(observation, handler))
         return observation
     }
 
-    func observeOnMain(_ handler: @escaping (T) -> Void) -> Observation {
+    public func observeOnMain(_ handler: @escaping (T) -> Void) -> Observation {
         observe { t in
             DispatchQueue.main.async {
                 handler(t)
@@ -26,17 +27,17 @@ public class Observer<T>: ObservationDelegate {
         }
     }
 
-    func notify(_ x: T) {
+    public func notify(_ x: T) {
         descriptors.forEach { $0.handler(x) }
     }
 
     // To notify
-    func dynamicallyCall(withArguments values: [T]) {
+    public func dynamicallyCall(withArguments values: [T]) {
         values.forEach(notify)
     }
 
     // To subscribe
-    func dynamicallyCall(withArguments handler: [(T) -> Void]) -> Observation {
+    public func dynamicallyCall(withArguments handler: [(T) -> Void]) -> Observation {
         observe(handler.first!)
     }
 
@@ -100,7 +101,6 @@ private protocol ObservationDelegate: class {
 }
 
 extension Observation {
-
     public func dispose(in bag: inout [Observation]) {
         bag.append(self)
     }

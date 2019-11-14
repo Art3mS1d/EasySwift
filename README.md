@@ -62,6 +62,12 @@ model.searchText = "hi"
 
 // to unsubscribe
 searchObservation = nil
+
+// without storing state
+let onComplete = Observer<Bool>()
+
+// to send
+onComplete(true)
 ```
 
 ## CoreData
