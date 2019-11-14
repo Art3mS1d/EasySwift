@@ -23,7 +23,7 @@
  - returns: Modified object or if it is value-typed it will return reconfigurated copy.
  */
 @discardableResult
-func ~ <T>(objectOrValue: T, configure: (inout T) throws -> Void) rethrows -> T {
+public func ~ <T>(objectOrValue: T, configure: (inout T) throws -> Void) rethrows -> T {
     var objectOrCopy = objectOrValue
     try configure(&objectOrCopy)
     return objectOrCopy

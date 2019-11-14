@@ -7,21 +7,20 @@
 
 import Foundation
 
-class Throttler {
+public class Throttler {
     
     private let minimumDelay: TimeInterval
+    private let lock = Lock()
     private let queue: DispatchQueue
     private var workItem = DispatchWorkItem {}
     private var previousRun = Date.distantPast
     
-    init(delay: TimeInterval, queue: DispatchQueue = .main) {
+    public init(delay: TimeInterval, queue: DispatchQueue = .main) {
         self.minimumDelay = delay
         self.queue = queue
     }
     
-    let lock = Lock()
-    
-    func throttle(handler: @escaping () -> Void) {
+    public func throttle(handler: @escaping () -> Void) {
         lock.lock()
         defer { lock.unlock() }
         
@@ -38,12 +37,11 @@ class Throttler {
             queue.asyncAfter(deadline: .now() + next.timeIntervalSinceNow, execute: workItem)
         }
     }
-    
 }
 
 extension Observer {
     
-    func throttle(_ delay: TimeInterval, in queue: DispatchQueue = .main, _ handler: @escaping (T) -> Void) -> Observation {
+    public func throttle(_ delay: TimeInterval, in queue: DispatchQueue = .main, _ handler: @escaping (T) -> Void) -> Observation {
         let throttler = Throttler(delay: delay, queue: queue)
         return observe { t in
             throttler.throttle {
@@ -53,7 +51,7 @@ extension Observer {
     }
 }
 
-internal final class Lock {
+public final class Lock {
     
     private var mutex: pthread_mutex_t = {
         var mutex = pthread_mutex_t()

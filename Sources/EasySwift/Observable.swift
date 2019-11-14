@@ -8,7 +8,7 @@
 import Foundation
 
 @dynamicCallable
-class Observer<T>: ObservationDelegate {
+public class Observer<T>: ObservationDelegate {
 
     fileprivate var descriptors: [Descriptor<T>] = []
 
@@ -46,9 +46,9 @@ class Observer<T>: ObservationDelegate {
 }
 
 @propertyWrapper
-class Observable<T> {
+public class Observable<T> {
 
-    class WrappedObserver<T>: Observer<T> {
+    public class WrappedObserver<T>: Observer<T> {
         fileprivate weak var delegate: Observable<T>!
 
         override func observe(_ handler: @escaping (T) -> Void) -> Observation {
@@ -57,14 +57,14 @@ class Observable<T> {
         }
     }
 
-    let projectedValue = WrappedObserver<T>()
+    public let projectedValue = WrappedObserver<T>()
 
-    init(wrappedValue: T) {
+    public init(wrappedValue: T) {
         self.wrappedValue = wrappedValue
         self.projectedValue.delegate = self
     }
 
-    var wrappedValue: T {
+    public var wrappedValue: T {
         didSet {
             projectedValue.notify(wrappedValue)
         }
@@ -83,7 +83,7 @@ private struct Descriptor<T> {
     }
 }
 
-class Observation {
+public class Observation {
 
     private weak var delegate: ObservationDelegate?
     fileprivate init(delegate: ObservationDelegate) {
@@ -101,11 +101,11 @@ private protocol ObservationDelegate: class {
 
 extension Observation {
 
-    func dispose(in bag: inout [Observation]) {
+    public func dispose(in bag: inout [Observation]) {
         bag.append(self)
     }
 
-    func dispose(in bag: inout Observation?) {
+    public func dispose(in bag: inout Observation?) {
         bag = self
     }
 }

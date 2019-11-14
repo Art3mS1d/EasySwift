@@ -10,13 +10,13 @@ import Foundation
 // Bytes
 
 extension Double {
-    var KB: Int {
+    public var KB: Int {
         Int(self * 1024)
     }
-    var MB: Int {
+    public var MB: Int {
         Int(KB * 1024)
     }
-    var GB: Int {
+    public var GB: Int {
         Int(MB * 1024)
     }
 }
@@ -24,16 +24,16 @@ extension Double {
 // TimeInterval
 
 extension Double {
-    var seconds: TimeInterval {
+    public var seconds: TimeInterval {
         self
     }
-    var minutes: TimeInterval {
+    public var minutes: TimeInterval {
         60 * seconds
     }
-    var hours: TimeInterval {
+    public var hours: TimeInterval {
         60 * minutes
     }
-    var days: TimeInterval {
+    public var days: TimeInterval {
         24 * hours
     }
 }
