@@ -50,6 +50,8 @@ public class Observer<T>: ObservationDelegate {
 public class Observable<T> {
 
     public class WrappedObserver<T>: Observer<T> {
+        
+        public override init() { }
         fileprivate weak var delegate: Observable<T>!
 
         override public func observe(_ handler: @escaping (T) -> Void) -> Observation {
