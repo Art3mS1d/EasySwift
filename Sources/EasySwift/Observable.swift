@@ -52,7 +52,7 @@ public class Observable<T> {
     public class WrappedObserver<T>: Observer<T> {
         fileprivate weak var delegate: Observable<T>!
 
-        override func observe(_ handler: @escaping (T) -> Void) -> Observation {
+        override public func observe(_ handler: @escaping (T) -> Void) -> Observation {
             defer { handler(delegate.wrappedValue) }
             return super.observe(handler)
         }
