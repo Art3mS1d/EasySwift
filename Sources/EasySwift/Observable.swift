@@ -11,15 +11,15 @@ import Foundation
 public class Observer<T>: ObservationDelegate {
 
     public init() { }
-    fileprivate var descriptors: [Descriptor<T>] = []
+    @usableFromInline var descriptors: [Descriptor<T>] = []
 
-    public func observe(_ handler: @escaping (T) -> Void) -> Observation {
+    @inlinable public func observe(_ handler: @escaping (T) -> Void) -> Observation {
         let observation = Observation(delegate: self)
         descriptors.append(Descriptor(observation, handler))
         return observation
     }
 
-    public func observeOnMain(_ handler: @escaping (T) -> Void) -> Observation {
+    @inlinable public func observeOnMain(_ handler: @escaping (T) -> Void) -> Observation {
         observe { t in
             DispatchQueue.main.async {
                 handler(t)
@@ -27,21 +27,21 @@ public class Observer<T>: ObservationDelegate {
         }
     }
 
-    public func notify(_ x: T) {
+    @inlinable public func notify(_ x: T) {
         descriptors.forEach { $0.handler(x) }
     }
 
     // To notify
-    public func dynamicallyCall(withArguments values: [T]) {
+    @inlinable public func dynamicallyCall(withArguments values: [T]) {
         values.forEach(notify)
     }
 
     // To subscribe
-    public func dynamicallyCall(withArguments handler: [(T) -> Void]) -> Observation {
+    @inlinable public func dynamicallyCall(withArguments handler: [(T) -> Void]) -> Observation {
         observe(handler.first!)
     }
 
-    fileprivate func invalidate() {
+    @usableFromInline func invalidate() {
         descriptors.removeAll { $0.observation == nil }
     }
 }
@@ -50,9 +50,9 @@ public class Observer<T>: ObservationDelegate {
 public class Observable<T> {
 
     public class WrappedObserver<T>: Observer<T> {
-        fileprivate weak var delegate: Observable<T>!
+        @usableFromInline weak var delegate: Observable<T>!
 
-        override public func observe(_ handler: @escaping (T) -> Void) -> Observation {
+        @inlinable override public func observe(_ handler: @escaping (T) -> Void) -> Observation {
             defer { handler(delegate.wrappedValue) }
             return super.observe(handler)
         }
@@ -72,13 +72,12 @@ public class Observable<T> {
     }
 }
 
-private struct Descriptor<T> {
-
-    let handler: (T) -> Void
-
+@usableFromInline struct Descriptor<T> {
+    
+    @usableFromInline let handler: (T) -> Void
     weak var observation: Observation?
 
-    init(_ observation: Observation, _ handler: @escaping (T) -> Void) {
+    @usableFromInline init(_ observation: Observation, _ handler: @escaping (T) -> Void) {
         self.observation = observation
         self.handler = handler
     }
@@ -86,8 +85,8 @@ private struct Descriptor<T> {
 
 public class Observation {
 
-    private weak var delegate: ObservationDelegate?
-    fileprivate init(delegate: ObservationDelegate) {
+    @usableFromInline weak var delegate: ObservationDelegate?
+    @usableFromInline init(delegate: ObservationDelegate) {
         self.delegate = delegate
     }
 
@@ -96,7 +95,7 @@ public class Observation {
     }
 }
 
-private protocol ObservationDelegate: class {
+@usableFromInline protocol ObservationDelegate: class {
     func invalidate()
 }
 

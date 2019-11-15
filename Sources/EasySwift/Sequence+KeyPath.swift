@@ -6,30 +6,30 @@
 //
 
 extension Sequence {
-    public func map<T>(_ keyPath: KeyPath<Element, T>) -> [T] {
+    @inlinable public func map<T>(_ keyPath: KeyPath<Element, T>) -> [T] {
         map { $0[keyPath: keyPath] }
     }
     
-    public func flatMap<T>(_ keyPath: KeyPath<Element, T>) -> [T.Element] where T: Sequence {
+    @inlinable public func flatMap<T>(_ keyPath: KeyPath<Element, T>) -> [T.Element] where T: Sequence {
         flatMap { $0[keyPath: keyPath] }
     }
     
-    public func compactMap<T>(_ keyPath: KeyPath<Element, T?>) -> [T] {
+    @inlinable public func compactMap<T>(_ keyPath: KeyPath<Element, T?>) -> [T] {
         compactMap { $0[keyPath: keyPath] }
     }
 
-    public func sorted<T: Comparable>(by keyPath: KeyPath<Element, T>) -> [Element] {
+    @inlinable public func sorted<T: Comparable>(by keyPath: KeyPath<Element, T>) -> [Element] {
         sorted { $0[keyPath: keyPath] < $1[keyPath: keyPath] }
     }
     
-    public func grouped<T: Hashable>(by keyPath: KeyPath<Element, T>) -> [T: [Element]] {
+    @inlinable public func grouped<T: Hashable>(by keyPath: KeyPath<Element, T>) -> [T: [Element]] {
         .init(grouping: self) { $0[keyPath: keyPath] }
     }
     
-    public func sum<T>(_ keyPath: KeyPath<Element, T>) -> T where T: Numeric {
+    @inlinable public func sum<T>(_ keyPath: KeyPath<Element, T>) -> T where T: Numeric {
         reduce(0) { $0 + $1[keyPath: keyPath] }
     }
-    public func sum<T>(_ keyPath: KeyPath<Element, T?>) -> T where T: Numeric {
+    @inlinable public func sum<T>(_ keyPath: KeyPath<Element, T?>) -> T where T: Numeric {
         reduce(0) { $0 + ($1[keyPath: keyPath] ?? 0) }
     }
 }
