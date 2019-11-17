@@ -22,7 +22,7 @@
  - parameter configure: Closure in witch it will be modified.
  - returns: Modified object or if it is value-typed it will return reconfigurated copy.
  */
-@discardableResult
+@discardableResult @inlinable
 public func ~ <T>(objectOrValue: T, configure: (inout T) throws -> Void) rethrows -> T {
     var objectOrCopy = objectOrValue
     try configure(&objectOrCopy)

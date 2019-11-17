@@ -77,7 +77,7 @@ onComplete(true)
 let files = Query<File>.all(\.filename ~= filenames, by: \.size, in: context)
 
 // Query recently created File
-let recent = Query<File>.any(by: \.createdAt, descending: true, in: context)
+let recent = Query<File>.any(by: \.createdAt, desc: true, in: context)
 
 // Delete entries where object downloaded and size above 10 MB
 Query<File>.delete(\.downloaded == true && \.size > 10.MB, in: context)
@@ -107,5 +107,10 @@ let hex = color.hexString
 
 ```swift
 collectionView.register(FontCell.self)
-let cell: FontCell = collectionView.dequeue(for: indexPath)
+let cell = collectionView.dequeue(for: indexPath) as FontCell
+```
+Same as: 
+```swift
+collectionView.register(FontCell.self, forCellWithReuseIdentifier: "FontCell")
+let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FontCell", for: indexPath) as! FontCell
 ```

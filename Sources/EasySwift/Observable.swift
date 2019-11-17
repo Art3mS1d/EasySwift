@@ -47,9 +47,9 @@ public class Observer<T>: ObservationDelegate {
 }
 
 @propertyWrapper
-public class Observable<T> {
+public final class Observable<T> {
 
-    public class WrappedObserver<T>: Observer<T> {
+    public final class WrappedObserver<T>: Observer<T> {
         @usableFromInline weak var delegate: Observable<T>!
 
         @inlinable override public func observe(_ handler: @escaping (T) -> Void) -> Observation {
@@ -83,9 +83,9 @@ public class Observable<T> {
     }
 }
 
-public class Observation {
+public final class Observation {
 
-    @usableFromInline weak var delegate: ObservationDelegate?
+    fileprivate weak var delegate: ObservationDelegate?
     @usableFromInline init(delegate: ObservationDelegate) {
         self.delegate = delegate
     }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public class Throttler {
+public final class Throttler {
     
     private let minimumDelay: TimeInterval
     private let lock = Lock()
@@ -20,7 +20,7 @@ public class Throttler {
         self.queue = queue
     }
     
-    public func throttle(handler: @escaping () -> Void) {
+    public func throttle(_ handler: @escaping () -> Void) {
         lock.lock()
         defer { lock.unlock() }
         
