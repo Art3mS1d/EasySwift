@@ -47,35 +47,32 @@ public class Observer<T>: ObservationDelegate {
 }
 
 @propertyWrapper
-public final class Observable<T> {
-
-    public final class WrappedObserver<T>: Observer<T> {
-        @usableFromInline weak var delegate: Observable<T>!
-
-        @inlinable override public func observe(_ handler: @escaping (T) -> Void) -> Observation {
-            defer { handler(delegate.wrappedValue) }
-            return super.observe(handler)
-        }
-    }
-
-    public let projectedValue = WrappedObserver<T>()
+public final class Observable<T>: Observer<T> {
 
     public init(wrappedValue: T) {
         self.wrappedValue = wrappedValue
-        self.projectedValue.delegate = self
     }
 
     public var wrappedValue: T {
         didSet {
-            projectedValue.notify(wrappedValue)
+            notify(wrappedValue)
         }
+    }
+    
+    public var projectedValue: Observer<T>  {
+        self
+    }
+    
+    @inlinable override public func observe(_ handler: @escaping (T) -> Void) -> Observation {
+        defer { handler(wrappedValue) }
+        return super.observe(handler)
     }
 }
 
 @usableFromInline struct Descriptor<T> {
     
     @usableFromInline let handler: (T) -> Void
-    weak var observation: Observation?
+    @usableFromInline weak var observation: Observation?
 
     @usableFromInline init(_ observation: Observation, _ handler: @escaping (T) -> Void) {
         self.observation = observation
@@ -85,12 +82,12 @@ public final class Observable<T> {
 
 public final class Observation {
 
-    fileprivate weak var delegate: ObservationDelegate?
+    @usableFromInline weak var delegate: ObservationDelegate?
     @usableFromInline init(delegate: ObservationDelegate) {
         self.delegate = delegate
     }
 
-    deinit {
+    @inlinable deinit {
         delegate?.invalidate()
     }
 }
@@ -106,5 +103,11 @@ extension Observation {
 
     public func dispose(in bag: inout Observation?) {
         bag = self
+    }
+}
+
+extension Observer where T == Void {
+    func dynamicallyCall(withArguments values: [T]) {
+        notify(())
     }
 }

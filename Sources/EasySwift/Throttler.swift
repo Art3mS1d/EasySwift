@@ -9,20 +9,19 @@ import Foundation
 
 public final class Throttler {
     
-    private let minimumDelay: TimeInterval
-    private let lock = Lock()
+    private let delay: TimeInterval
+    private let lock = NSLock()
     private let queue: DispatchQueue
     private var workItem = DispatchWorkItem {}
     private var previousRun = Date.distantPast
     
     public init(delay: TimeInterval, queue: DispatchQueue = .main) {
-        self.minimumDelay = delay
+        self.delay = delay
         self.queue = queue
     }
     
     public func throttle(_ handler: @escaping () -> Void) {
-        lock.lock()
-        defer { lock.unlock() }
+        lock.lock(); defer { lock.unlock() }
         
         workItem.cancel()
         workItem = DispatchWorkItem { [weak self] in
@@ -30,7 +29,7 @@ public final class Throttler {
             self.previousRun = Date()
             handler()
         }
-        let next = previousRun + minimumDelay
+        let next = previousRun + delay
         if next < Date() {
             queue.async(execute: workItem)
         } else {
@@ -48,22 +47,5 @@ extension Observer {
                 handler(t)
             }
         }
-    }
-}
-
-public final class Lock {
-    
-    private var mutex: pthread_mutex_t = {
-        var mutex = pthread_mutex_t()
-        pthread_mutex_init(&mutex, nil)
-        return mutex
-    }()
-
-    func lock() {
-        pthread_mutex_lock(&mutex)
-    }
-
-    func unlock() {
-        pthread_mutex_unlock(&mutex)
     }
 }
