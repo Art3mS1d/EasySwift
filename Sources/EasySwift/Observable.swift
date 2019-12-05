@@ -8,36 +8,36 @@
 import Foundation
 
 @dynamicCallable
-public class Observer<T>: ObservationDelegate {
+public class Observer<Value>: ObservationDelegate {
 
     public init() { }
-    @usableFromInline var descriptors: [Descriptor<T>] = []
+    @usableFromInline var descriptors: [Descriptor<Value>] = []
 
-    @inlinable public func observe(_ handler: @escaping (T) -> Void) -> Observation {
+    @inlinable public func observe(_ handler: @escaping (Value) -> Void) -> Observation {
         let observation = Observation(delegate: self)
         descriptors.append(Descriptor(observation, handler))
         return observation
     }
 
-    @inlinable public func observeOnMain(_ handler: @escaping (T) -> Void) -> Observation {
-        observe { t in
+    @inlinable public func observeOnMain(_ handler: @escaping (Value) -> Void) -> Observation {
+        observe { value in
             DispatchQueue.main.async {
-                handler(t)
+                handler(value)
             }
         }
     }
 
-    @inlinable public func notify(_ x: T) {
-        descriptors.forEach { $0.handler(x) }
+    @inlinable public func notify(_ value: Value) {
+        descriptors.forEach { $0.handler(value) }
     }
 
     // To notify
-    @inlinable public func dynamicallyCall(withArguments values: [T]) {
+    @inlinable public func dynamicallyCall(withArguments values: [Value]) {
         values.forEach(notify)
     }
 
     // To subscribe
-    @inlinable public func dynamicallyCall(withArguments handler: [(T) -> Void]) -> Observation {
+    @inlinable public func dynamicallyCall(withArguments handler: [(Value) -> Void]) -> Observation {
         observe(handler.first!)
     }
 
@@ -47,34 +47,34 @@ public class Observer<T>: ObservationDelegate {
 }
 
 @propertyWrapper
-public final class Observable<T>: Observer<T> {
+public final class Observable<Value>: Observer<T> {
 
-    public init(wrappedValue: T) {
+    public init(wrappedValue: Value) {
         self.wrappedValue = wrappedValue
     }
 
-    public var wrappedValue: T {
+    public var wrappedValue: Value {
         didSet {
             notify(wrappedValue)
         }
     }
     
-    public var projectedValue: Observer<T>  {
+    public var projectedValue: Observer<Value>  {
         self
     }
     
-    @inlinable override public func observe(_ handler: @escaping (T) -> Void) -> Observation {
-        defer { handler(wrappedValue) }
+    @inlinable override public func observe(_ handler: @escaping (Value) -> Void) -> Observation {
+        handler(wrappedValue)
         return super.observe(handler)
     }
 }
 
-@usableFromInline struct Descriptor<T> {
+@usableFromInline final class Descriptor<Value> {
     
-    @usableFromInline let handler: (T) -> Void
+    @usableFromInline let handler: (Value) -> Void
     @usableFromInline weak var observation: Observation?
 
-    @usableFromInline init(_ observation: Observation, _ handler: @escaping (T) -> Void) {
+    @usableFromInline init(_ observation: Observation, _ handler: @escaping (Value) -> Void) {
         self.observation = observation
         self.handler = handler
     }
@@ -97,17 +97,17 @@ public final class Observation {
 }
 
 extension Observation {
-    public func dispose(in bag: inout [Observation]) {
+    @inlinable public func dispose(in bag: inout [Observation]) {
         bag.append(self)
     }
 
-    public func dispose(in bag: inout Observation?) {
+    @inlinable public func dispose(in bag: inout Observation?) {
         bag = self
     }
 }
 
 extension Observer where T == Void {
-    func dynamicallyCall(withArguments values: [T]) {
+    @inlinable public func dynamicallyCall(withArguments values: [T]) {
         notify(())
     }
 }
