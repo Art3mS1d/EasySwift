@@ -1,6 +1,6 @@
 # EasySwift
 
-Collection of some Swift tweaks.
+Collection of Swift tweaks for iOS.
 
 ## Mutation Operator
 

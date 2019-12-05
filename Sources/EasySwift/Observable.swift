@@ -47,7 +47,7 @@ public class Observer<Value>: ObservationDelegate {
 }
 
 @propertyWrapper
-public final class Observable<Value>: Observer<T> {
+public final class Observable<Value>: Observer<Value> {
 
     public init(wrappedValue: Value) {
         self.wrappedValue = wrappedValue
@@ -106,8 +106,11 @@ extension Observation {
     }
 }
 
-extension Observer where T == Void {
-    @inlinable public func dynamicallyCall(withArguments values: [T]) {
+extension Observer where Value == Void {
+    @inlinable public func notify() {
         notify(())
+    }
+    @inlinable public func dynamicallyCall(withArguments values: [Void]) {
+        notify()
     }
 }

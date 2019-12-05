@@ -40,11 +40,11 @@ public final class Throttler {
 
 extension Observer {
     
-    public func throttle(_ delay: TimeInterval, in queue: DispatchQueue = .main, _ handler: @escaping (T) -> Void) -> Observation {
+    public func throttle(_ delay: TimeInterval, in queue: DispatchQueue = .main, _ handler: @escaping (Value) -> Void) -> Observation {
         let throttler = Throttler(delay: delay, queue: queue)
-        return observe { t in
+        return observe { value in
             throttler.throttle {
-                handler(t)
+                handler(value)
             }
         }
     }
