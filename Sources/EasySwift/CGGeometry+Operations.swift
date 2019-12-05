@@ -5,7 +5,7 @@
 //  Created by Artem Sydorenko on 14.11.2019.
 //
 
-import CoreGraphics
+import UIKit
 
 // MARK: CGPoint
 
