@@ -1,3 +1,5 @@
+![](https://github.com/Art3mS1d/EasySwift/workflows/Swift/badge.svg)
+
 # EasySwift
 
 Collection of Swift tweaks for iOS.
