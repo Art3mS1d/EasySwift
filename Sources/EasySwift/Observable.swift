@@ -49,13 +49,19 @@ public class Observer<Value>: ObservationDelegate {
 @propertyWrapper
 public final class Observable<Value>: Observer<Value> {
 
+    @usableFromInline let lock = NSLock()
+
     public init(wrappedValue: Value) {
         self.wrappedValue = wrappedValue
     }
 
     public var wrappedValue: Value {
+        willSet {
+            lock.lock()
+        }
         didSet {
             notify(wrappedValue)
+            lock.unlock()
         }
     }
     
@@ -64,6 +70,7 @@ public final class Observable<Value>: Observer<Value> {
     }
     
     @inlinable override public func observe(_ handler: @escaping (Value) -> Void) -> Observation {
+        lock.lock(); defer { lock.unlock() }
         handler(wrappedValue)
         return super.observe(handler)
     }
@@ -100,7 +107,6 @@ extension Observation {
     @inlinable public func dispose(in bag: inout [Observation]) {
         bag.append(self)
     }
-
     @inlinable public func dispose(in bag: inout Observation?) {
         bag = self
     }
