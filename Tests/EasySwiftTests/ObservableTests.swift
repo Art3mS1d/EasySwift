@@ -13,22 +13,22 @@ final class ObservableTests: XCTestCase {
         XCTAssertNil(observation)
         XCTAssertEqual($text.descriptors.count, 0)
 
-        let _ = $text.observe { [weak self] text in
+        let _ = $text { [weak self] text in
             XCTAssertEqual(text, "hello")
             XCTAssertNil(self?.observation)
         }
         XCTAssertEqual($text.descriptors.count, 0)
-        
+
         var initial = true
         var secondInvoke = false
         
-        $text.observe { [weak self] text in
+        $text { [weak self] text in
             if initial {
                 XCTAssertEqual(text, "hello")
                 XCTAssertNil(self?.observation)
                 initial = false
             } else {
-                XCTAssertEqual(text, "goodbuy")
+                XCTAssertEqual(text, "goodbye")
                 XCTAssertNotNil(self?.observation)
                 secondInvoke = true
             }
@@ -38,10 +38,10 @@ final class ObservableTests: XCTestCase {
         XCTAssertEqual($text.descriptors.count, 1)
         
         XCTAssertFalse(secondInvoke)
-        text = "goodbuy"
+        text = "goodbye"
         XCTAssertTrue(secondInvoke)
         
-        $text.observe { text in
+        $text { text in
         }.dispose(in: &observation)
         
         XCTAssertEqual($text.descriptors.count, 1)
@@ -74,7 +74,7 @@ final class ObservableTests: XCTestCase {
     
     func testStateObserver() {
         var prev = 0
-        changeObserver.observe { (old, new) in
+        changeObserver { (old, new) in
             XCTAssertNotEqual(old, new)
             prev = old
         }.dispose(in: &observation)
@@ -89,12 +89,12 @@ final class ObservableTests: XCTestCase {
         let emptyObserver = Observer<Void>()
 
         var invoked = false
-        emptyObserver.observe {
+        emptyObserver {
             invoked = true
         }.dispose(in: &observation)
         
         XCTAssertFalse(invoked)
-        emptyObserver.notify()
+        emptyObserver()
         XCTAssertTrue(invoked)
     }
 

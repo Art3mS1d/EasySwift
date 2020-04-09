@@ -43,6 +43,10 @@ public func / (l: CGSize, r: CGFloat) -> CGSize {
     CGSize(width: l.width / r, height: l.height / r)
 }
 
+public func + (l: CGSize, r: CGSize) -> CGSize {
+    CGSize(width: l.width + r.width, height: l.height + r.height)
+}
+
 public func - (l: CGSize, r: CGSize) -> CGSize {
     CGSize(width: l.width - r.width, height: l.height - r.height)
 }

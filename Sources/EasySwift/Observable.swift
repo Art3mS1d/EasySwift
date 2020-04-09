@@ -7,7 +7,7 @@
 
 import Foundation
 
-@dynamicCallable
+
 public class Observer<Value>: ObservationDelegate {
 
     public init() { }
@@ -30,15 +30,12 @@ public class Observer<Value>: ObservationDelegate {
     @inlinable public func notify(_ value: Value) {
         descriptors.forEach { $0.handler(value) }
     }
-
-    // To notify
-    @inlinable public func dynamicallyCall(withArguments values: [Value]) {
-        values.forEach(notify)
+    
+    func callAsFunction(_ value: Value) {
+        notify(value)
     }
-
-    // To subscribe
-    @inlinable public func dynamicallyCall(withArguments handler: [(Value) -> Void]) -> Observation {
-        observe(handler.first!)
+    func callAsFunction(_ handler: @escaping (Value) -> Void) -> Observation {
+        observe(handler)
     }
 
     @usableFromInline func invalidate() {
@@ -49,7 +46,7 @@ public class Observer<Value>: ObservationDelegate {
 @propertyWrapper
 public final class Observable<Value>: Observer<Value> {
 
-    @usableFromInline let lock = NSLock()
+    @usableFromInline let lock = NSRecursiveLock()
 
     public init(wrappedValue: Value) {
         self.wrappedValue = wrappedValue
@@ -116,7 +113,7 @@ extension Observer where Value == Void {
     @inlinable public func notify() {
         notify(())
     }
-    @inlinable public func dynamicallyCall(withArguments values: [Void]) {
+    func callAsFunction() {
         notify()
     }
 }
