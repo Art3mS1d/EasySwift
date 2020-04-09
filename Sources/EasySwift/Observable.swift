@@ -31,10 +31,10 @@ public class Observer<Value>: ObservationDelegate {
         descriptors.forEach { $0.handler(value) }
     }
     
-    func callAsFunction(_ value: Value) {
+    public func callAsFunction(_ value: Value) {
         notify(value)
     }
-    func callAsFunction(_ handler: @escaping (Value) -> Void) -> Observation {
+    public func callAsFunction(_ handler: @escaping (Value) -> Void) -> Observation {
         observe(handler)
     }
 
@@ -113,7 +113,7 @@ extension Observer where Value == Void {
     @inlinable public func notify() {
         notify(())
     }
-    func callAsFunction() {
+    public func callAsFunction() {
         notify()
     }
 }
