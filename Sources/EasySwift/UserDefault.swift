@@ -10,11 +10,11 @@ import Foundation
 
 @propertyWrapper
 public struct UserDefault<Value: PropertyListValue> {
-    let key: UserDefaultKey
+    let key: Key<Value>
     let defaultValue: Value
     let defaults: UserDefaults
 
-    public init(wrappedValue: Value, _ key: UserDefaultKey, _ defaults: UserDefaults = .standard) {
+    public init(wrappedValue: Value, _ key: Key<Value>, _ defaults: UserDefaults = .standard) {
         self.key = key
         self.defaultValue = wrappedValue
         self.defaults = defaults
@@ -32,16 +32,15 @@ public struct UserDefault<Value: PropertyListValue> {
             }
         }
     }
-}
-
-
-public struct UserDefaultKey: RawRepresentable, ExpressibleByStringLiteral {
-    public let rawValue: String
-    public init(rawValue: String) {
-        self.rawValue = rawValue
-    }
-    public init(stringLiteral: String) {
-        rawValue = stringLiteral
+    
+    public struct Key<Value: PropertyListValue>: RawRepresentable, ExpressibleByStringLiteral {
+        public let rawValue: String
+        public init(rawValue: String) {
+            self.rawValue = rawValue
+        }
+        public init(stringLiteral: String) {
+            rawValue = stringLiteral
+        }
     }
 }
 

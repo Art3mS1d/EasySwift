@@ -38,6 +38,6 @@ class UserDefaultTests: XCTestCase {
     }
 }
 
-extension UserDefaultKey {
-    static let isFirstLaunch: Self = "isFirstLaunch"
+extension UserDefault.Key {
+    static var isFirstLaunch: Self<Bool> { "isFirstLaunch" }
 }
