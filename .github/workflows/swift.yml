@@ -9,6 +9,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
+    - name: Force xcode 11.4.1
+      run: sudo xcode-select -switch /Applications/Xcode_11.4.1.app
     - name: Generate xcodeproj
       run: swift package generate-xcodeproj
     - name: Run tests
