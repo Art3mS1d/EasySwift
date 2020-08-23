@@ -31,7 +31,7 @@ extension UIColor {
     public var hexString: String {
         var r: CGFloat = 0, g: CGFloat = 0, b: CGFloat = 0
         getRed(&r, green: &g, blue: &b, alpha: nil)
-        return String(format: "#%02lX%02lX%02lX", Int(r * 255), Int(g * 255), Int(b * 255))
+        return [r, g, b].map { String(format: "%02lX", Int($0 * 255)) }.reduce("#", +)
     }
 
     // shortcut for alpha modifier

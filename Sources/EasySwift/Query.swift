@@ -10,8 +10,8 @@ import CoreData
 
 public enum Query<T: NSManagedObject> {
         
-    public static func fetchRequest(
-        _ filter: NSPredicate? = nil,
+    public static func request(
+        for filter: NSPredicate? = nil,
         by sort: [NSSortDescriptor]? = nil,
         limit: Int = 0
     ) -> NSFetchRequest<T> {
@@ -37,7 +37,7 @@ public enum Query<T: NSManagedObject> {
         limit: Int = 0,
         in context: NSManagedObjectContext
     ) -> [T] {
-        try! context.fetch(fetchRequest(predicate, by: sort, limit: limit))
+        try! context.fetch(request(for: predicate, by: sort, limit: limit))
     }
 
     public static func all(request: NSFetchRequest<T>, in context: NSManagedObjectContext) -> [T] {
@@ -45,11 +45,12 @@ public enum Query<T: NSManagedObject> {
      }
 
     public static func count(predicate: NSPredicate? = nil, in context: NSManagedObjectContext) -> Int {
-        try! context.count(for: fetchRequest(predicate))
+        try! context.count(for: request(for: predicate))
     }
 
+    @discardableResult
     public static func delete(predicate: NSPredicate? = nil, in context: NSManagedObjectContext) -> [T] {
-        let request = fetchRequest(predicate)
+        let request = self.request(for: predicate)
         request.includesPropertyValues = false
         let objects = all(request: request, in: context)
         objects.forEach(context.delete)
@@ -57,6 +58,23 @@ public enum Query<T: NSManagedObject> {
     }
 
     // MARK: Typed predicate
+    
+    public static func request<P: TypedPredicate, V>(
+        for filter: P,
+        by sort: KeyPath<T, V>,
+        desc: Bool = false,
+        limit: Int = 0
+    ) -> NSFetchRequest<T> where P.Root == T {
+        request(for: filter, by: [NSSortDescriptor(keyPath: sort, ascending: !desc)], limit: limit)
+    }
+
+    public static func request<V>(
+        by sort: KeyPath<T, V>,
+        desc: Bool = false,
+        limit: Int = 0
+    ) -> NSFetchRequest<T> {
+        request(for: nil, by: [NSSortDescriptor(keyPath: sort, ascending: !desc)], limit: limit)
+    }
     
     public static func any<P: TypedPredicate>(
         _ filter: P,
@@ -118,6 +136,7 @@ public enum Query<T: NSManagedObject> {
         count(predicate: filter, in: context)
     }
     
+    @discardableResult
     public static func delete<P: TypedPredicate>(
         _ filter: P,
         in context: NSManagedObjectContext

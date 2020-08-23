@@ -51,6 +51,10 @@ public func - (l: CGSize, r: CGSize) -> CGSize {
     CGSize(width: l.width - r.width, height: l.height - r.height)
 }
 
+public func + (l: CGSize, r: UIEdgeInsets) -> CGSize {
+    CGSize(width: l.width + r.left + r.right, height: l.height + r.top + r.bottom)
+}
+
 // MARK: CGRect
 
 public func * (l: CGRect, r: CGFloat) -> CGRect {

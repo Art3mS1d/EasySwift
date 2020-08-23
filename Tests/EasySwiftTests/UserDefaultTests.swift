@@ -30,14 +30,13 @@ class UserDefaultTests: XCTestCase {
         XCTAssertNil(default2)
     }
     
-    @UserDefault(.isFirstLaunch)
-    var default3 = true
 
-    func testKeys() {
-        default3 = false
-    }
+    @UserDefault(.firstLaunchDate)
+    var firstLaunch = nil
+
+
 }
 
 extension UserDefault.Key {
-    static var isFirstLaunch: Self<Bool> { "isFirstLaunch" }
+    static var firstLaunchDate: UserDefault.Key<Date?> { #function }
 }
