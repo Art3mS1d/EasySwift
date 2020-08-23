@@ -44,7 +44,7 @@ extension AttributedString {
         with(.underlineStyle, underline.rawValue)
     }
     
-    func with(replacedFonts replaces: [String: String]) -> Self {
+    public func with(replacedFonts replaces: [String: String]) -> Self {
         enumerateAttribute(.font, in: NSRange(location: 0, length: length), options: []) { font, range, _ in
             guard let font = font as? UIFont, let next = replaces[font.fontName] else { return }
             removeAttribute(.font, range: range)
@@ -53,7 +53,7 @@ extension AttributedString {
         return self
     }
     
-    func with(scale: CGFloat) -> Self {
+    public func with(scale: CGFloat) -> Self {
         enumerateAttribute(.font, in: NSRange(location: 0, length: length), options: []) { font, range, _ in
             guard let font = font as? UIFont else { return }
             removeAttribute(.font, range: range)
@@ -66,7 +66,7 @@ extension AttributedString {
         with(.link, link, mutableString.range(of: text))
     }
     
-    func with(attrs: [NSAttributedString.Key: Any], for texts: [String]) -> Self {
+    public func with(attrs: [NSAttributedString.Key: Any], for texts: [String]) -> Self {
         let string = mutableString
         texts.forEach {
             for range in string.ranges(of: $0) {
@@ -84,19 +84,19 @@ public func + (l: AttributedString, r: AttributedString) -> AttributedString {
 
 extension String {
     
-    var attributed: AttributedString {
+    public var attributed: AttributedString {
         AttributedString(self)
     }
 }
 extension NSAttributedString {
     
-    var mutable: AttributedString {
+    public var mutable: AttributedString {
         AttributedString(attributedString: self)
     }
 }
 
 extension NSString {
-    func ranges(of substring: String) -> [NSRange] {
+    public func ranges(of substring: String) -> [NSRange] {
         var ranges: [NSRange] = []
         while ranges.last.map({ $0.upperBound < length }) ?? true {
             let start = ranges.last?.upperBound ?? 0
